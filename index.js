@@ -41,7 +41,7 @@ app.get("/open-graph", (req, res) => {
   ctx.strokeStyle = "#ccc";
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 5]);
-  const gridLines = 5; // number of horizontal lines
+  const gridLines = 5;
   for (let i = 0; i <= gridLines; i++) {
     const y = margin + (i * chartHeight) / gridLines;
     ctx.beginPath();
@@ -63,7 +63,7 @@ app.get("/open-graph", (req, res) => {
   ctx.setLineDash([]);
 
   // Draw data line
-  ctx.strokeStyle = "blue";
+  ctx.strokeStyle = req.query.color;
   ctx.lineWidth = 2;
   ctx.beginPath();
   data.forEach((val, i) => {
@@ -73,6 +73,16 @@ app.get("/open-graph", (req, res) => {
     else ctx.lineTo(x, y);
   });
   ctx.stroke();
+
+  // Draw dots at each point
+  ctx.fillStyle = "orange";
+  data.forEach((val, i) => {
+    const x = margin + i * stepX;
+    const y = height - margin - val * scaleY;
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
 
   // Send image
   res.setHeader("Content-Type", "image/png");
