@@ -18,7 +18,7 @@ app.get("/open-graph", (req, res) => {
 
   // Sample data
   const data = [
-    Math.random() * 10,
+    10 * Math.random(),
     30 * Math.random(),
     20 * Math.random(),
     50 * Math.random(),
@@ -27,7 +27,7 @@ app.get("/open-graph", (req, res) => {
     60 * Math.random(),
   ];
 
-  // Margins for padding
+  // Margins
   const margin = 20;
   const chartWidth = width - 2 * margin;
   const chartHeight = height - 2 * margin;
@@ -37,8 +37,33 @@ app.get("/open-graph", (req, res) => {
   const stepX = chartWidth / (data.length - 1);
   const scaleY = chartHeight / maxValue;
 
-  // Draw line only
-  ctx.strokeStyle = req.query.color;
+  // Draw horizontal grid lines
+  ctx.strokeStyle = "#ccc";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  const gridLines = 5; // number of horizontal lines
+  for (let i = 0; i <= gridLines; i++) {
+    const y = margin + (i * chartHeight) / gridLines;
+    ctx.beginPath();
+    ctx.moveTo(margin, y);
+    ctx.lineTo(width - margin, y);
+    ctx.stroke();
+  }
+
+  // Draw vertical grid lines
+  for (let i = 0; i < data.length; i++) {
+    const x = margin + i * stepX;
+    ctx.beginPath();
+    ctx.moveTo(x, margin);
+    ctx.lineTo(x, height - margin);
+    ctx.stroke();
+  }
+
+  // Reset dash for main line
+  ctx.setLineDash([]);
+
+  // Draw data line
+  ctx.strokeStyle = "blue";
   ctx.lineWidth = 2;
   ctx.beginPath();
   data.forEach((val, i) => {
